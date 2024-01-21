@@ -14,10 +14,10 @@ int main(int argc, char** argv)
         " grep \"^\\w\" | sort -u "
         " > download_list_0.txt");
     system(download_sh.c_str());
-    std::ifstream download_list_file("./download_list_0.txt");
-    if(!download_list_file.is_open())
+    std::ifstream download_list_file_raw("./download_list_0.txt");
+    if(!download_list_file_raw.is_open())
     {
-        printf("download_list_file open failed.\n");
+        printf("download_list_file_raw open failed.\n");
         return 0;
     }
     /** 
@@ -26,9 +26,9 @@ int main(int argc, char** argv)
      */
     std::map<std::string,int> download_map;
     std::string read_buffer;
-    while(!download_list_file.eof())
+    while(!download_list_file_raw.eof())
     {
-        std::getline(download_list_file,read_buffer);
+        std::getline(download_list_file_raw,read_buffer);
         if(read_buffer.length() == 0)
         {
             break;
@@ -57,6 +57,22 @@ int main(int argc, char** argv)
             }
         }
     }
+    download_list_file_raw.close();
     /* write the download_map to a file */
+    std::ofstream download_list_file_final\
+        ("./download_list_final.txt");
+    if(!download_list_file_final.is_open())
+    {
+        printf("open download_list_file_final error. break.\n");
+        return 0;
+    }
+    std::map<std::string,int>::iterator it;
+    it = download_map.begin();
+    for(it; it!=download_map.end(); it++)
+    {
+        std::cout << "write in " << it->first << std::endl;
+        download_list_file_final << it->first << std::endl;
+    }
+    download_list_file_final.close();
     return 0;
 }
