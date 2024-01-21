@@ -58,12 +58,12 @@ int main(int argc, char** argv)
         }
     }
     download_list_file_raw.close();
-    /* write the download_map to a file */
-    std::ofstream download_list_file_final\
-        ("./download_list_final.txt");
-    if(!download_list_file_final.is_open())
+    /* write the download_map to a sh file */
+    std::ofstream download_sh2\
+        ("./download_1.sh");
+    if(!download_sh2.is_open())
     {
-        printf("open download_list_file_final error. break.\n");
+        printf("open download_sh2 error. break.\n");
         return 0;
     }
     std::map<std::string,int>::iterator it;
@@ -71,8 +71,14 @@ int main(int argc, char** argv)
     for(it; it!=download_map.end(); it++)
     {
         std::cout << "write in " << it->first << std::endl;
-        download_list_file_final << it->first << std::endl;
+        download_sh2 << "apt download  "<< it->first << std::endl;
     }
-    download_list_file_final.close();
+    download_sh2.close();
+    system("chmod 755 ./download_1.sh");
+    system("mkdir download\n cd download\n"
+        "echo 'apt download $(cat ../download_list_0.txt)'>download.sh\n"
+        "echo ../download_1.sh>>download.sh\n"
+        "chmod 755 download.sh\n"
+        "./download.sh"); 
     return 0;
 }
