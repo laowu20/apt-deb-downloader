@@ -70,15 +70,17 @@ int main(int argc, char** argv)
     it = download_map.begin();
     for(it; it!=download_map.end(); it++)
     {
-        std::cout << "write in " << it->first << std::endl;
         download_sh2 << "apt download  "<< it->first << std::endl;
     }
     download_sh2.close();
+    /* generate download.sh */
     system("chmod 755 ./download_1.sh");
-    system("mkdir download\n cd download\n"
+    system(
         "echo 'apt download $(cat ../download_list_0.txt)'>download.sh\n"
         "echo ../download_1.sh>>download.sh\n"
-        "chmod 755 download.sh\n"
-        "./download.sh"); 
+        "chmod 755 download.sh\n");
+    /* run download.sh */
+    system("mkdir download\n cd download\n"
+        "../download.sh"); 
     return 0;
 }
