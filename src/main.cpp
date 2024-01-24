@@ -9,15 +9,16 @@
 void print_help_info()
 {
     printf("\nA program using apt to download debs.\n"
+            "Usage: apt-deb-downloader [options] ...\n"
             "Options:\n"
-            "-a arch            deb target architecture,"
-                " such like \"arm64\".\n"
-            "-d deb_name        one name to be apt install, "
-                "such like \"libglib2.0-dev\".\n"
-            "-i input_file      file_path to deb_name"
-                " list file. Each line of the file "
-                "is a deb_name.\n"
-            "-h                 print help info.\n"
+            "-a arch <architectrue>           deb target architecture,\n"
+            "                                 such like \"arm64\".\n"
+            "-d deb_name <deb name>           one name to be apt install,\n"
+            "                                 such like \"libglib2.0-dev\".\n"
+            "-i input_file <input file path>  file_path to deb_name list file.\n"
+            "                                 Each line of the file\n"
+            "                                 is a deb_name.\n"
+            "-h                               print help info.\n"
             );
 }
 
