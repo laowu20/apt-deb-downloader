@@ -210,5 +210,6 @@ int main(int argc, char** argv)
     /* run download.sh */
     system("mkdir download\n cd download\n"
         "../download.sh"); 
+    std::cout << "All debs are saved at ./download/" << std::endl;
     return 0;
 }
