@@ -1,11 +1,92 @@
 #include<stdio.h>
-#include<stdlib.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include<string>
 #include<fstream>
 #include<map>
 #include<iostream>
+void print_help_info()
+{
+    printf("\nA program using apt to download debs.\n"
+            "Options:\n"
+            "-a arch            deb target architecture,"
+                " such like \"arm64\".\n"
+            "-d deb_name        name to be apt install, "
+                "such like \"libglib2.0-dev\".\n"
+            "-i input_file      file_path to deb_name"
+                " list file. Each line of the file "
+                "is a deb_name.\n"
+            "-h                 print help info.\n"
+            );
+}
 int main(int argc, char** argv)
 {
+    std::string input_file; /* name list file path */
+    std::string deb_name;   /* input name */
+    std::string arch;       /* arch such like arm64 */
+    int index;           
+    int c;
+
+    opterr = 0;
+
+    while ((c = getopt (argc, argv, "a:d:i:h")) != -1)
+        switch (c)
+        {
+        case 'a':
+            arch.assign(optarg);
+        break;
+        case 'd':
+            deb_name.assign(optarg);
+        break;
+        case 'i':
+            input_file.assign(optarg);
+        case 'h':
+            print_help_info();
+            return 0;
+        break;
+        case '?':
+            if (optopt == 'i' ||optopt == 'd'||optopt == 'a')
+                fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+            else if (isprint (optopt))
+                fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+            else
+                fprintf (stderr,
+                   "Unknown option character `\\x%x'.\n",
+                   optopt);
+            print_help_info();
+            return 1;
+        default:
+            fprintf (stderr, "Unknown input opt :%c\n", optopt);
+            print_help_info();
+            return 1;
+        }
+    for (index = optind; index < argc; index++)
+    {
+        printf ("Non-option argument %s\n", argv[index]);
+        if(index == argc - 1)
+        {
+            print_help_info();
+            return 0;
+        }
+    }
+
+    if(arch.length())
+    {
+        std::cout << "arch: " << arch << std::endl;
+    }
+    else
+    {
+        std::cout << "arch: " << "your local arch." << std::endl;
+    }
+    std::cout << "deb_name: " << deb_name << std::endl;
+    std::cout << "input_file: " << input_file << std::endl;
+    if(!deb_name.length() && !input_file.length())
+    {
+        std::cout << "nothing need to be download." << std::endl;
+        print_help_info();
+        return 0;
+    }
     printf("hello. deb-downloader start!\n");
     /* get raw deb list */
     std::string download_sh("apt depends --recurse" 
