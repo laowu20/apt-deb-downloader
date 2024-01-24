@@ -12,7 +12,7 @@ void print_help_info()
             "Options:\n"
             "-a arch            deb target architecture,"
                 " such like \"arm64\".\n"
-            "-d deb_name        name to be apt install, "
+            "-d deb_name        one name to be apt install, "
                 "such like \"libglib2.0-dev\".\n"
             "-i input_file      file_path to deb_name"
                 " list file. Each line of the file "
@@ -20,11 +20,46 @@ void print_help_info()
             "-h                 print help info.\n"
             );
 }
+
+std::string make_deb_name_list(std::string deb_name\
+        , std::string input_file, std::string arch)
+{
+    std::string deb_name_list;
+    std::string arch_tail;
+    if(arch.length())
+    {
+        arch_tail = ":" + arch;
+    }
+    if(deb_name.length())
+    {
+        deb_name_list += deb_name + arch_tail + " ";
+    }
+    if(input_file.length())
+    {
+        std::ifstream deb_file(input_file);
+        if(!deb_file.is_open())
+        {
+            fprintf(stderr, "open input_file failed.\n");
+            return "";
+        }
+        std::string read_buffer;
+        while(!deb_file.eof())
+        {
+            std::getline(deb_file,read_buffer);
+            if(read_buffer.length() == 0)
+            {
+                continue;
+            }
+            deb_name_list += read_buffer + arch_tail + " ";
+        }
+    }
+    return deb_name_list;
+}
 int main(int argc, char** argv)
 {
     std::string input_file; /* name list file path */
     std::string deb_name;   /* input name */
-    std::string arch;       /* arch such like arm64 */
+    std::string arch;       /* arch, such like arm64 */
     int index;           
     int c;
 
@@ -41,10 +76,10 @@ int main(int argc, char** argv)
         break;
         case 'i':
             input_file.assign(optarg);
+        break;
         case 'h':
             print_help_info();
             return 0;
-        break;
         case '?':
             if (optopt == 'i' ||optopt == 'd'||optopt == 'a')
                 fprintf (stderr, "Option -%c requires an argument.\n", optopt);
@@ -77,7 +112,7 @@ int main(int argc, char** argv)
     }
     else
     {
-        std::cout << "arch: " << "your local arch." << std::endl;
+        std::cout << "arch: " << "your local architecture." << std::endl;
     }
     std::cout << "deb_name: " << deb_name << std::endl;
     std::cout << "input_file: " << input_file << std::endl;
@@ -87,13 +122,21 @@ int main(int argc, char** argv)
         print_help_info();
         return 0;
     }
-    printf("hello. deb-downloader start!\n");
+    std::string deb_list = make_deb_name_list(deb_name, input_file, arch);
+    std::cout << "generate deb_list: " << deb_list << std::endl;
+    if(!deb_list.length())
+    {
+        fprintf(stderr, "no deb can be download.\n");
+        return 0;
+    }
+    printf("download start!\n");
     /* get raw deb list */
     std::string download_sh("apt depends --recurse" 
         " --no-recommends --no-suggests --no-conflicts "
-        " --no-breaks --no-replaces --no-enhances libglib2.0-dev:arm64 | "
-        " grep \"^\\w\" | sort -u "
-        " > download_list_0.txt");
+        " --no-breaks --no-replaces --no-enhances ");
+    download_sh += deb_list;
+    download_sh += " | grep \"^\\w\" | sort -u ";
+    download_sh += " > download_list_0.txt";
     system(download_sh.c_str());
     std::ifstream download_list_file_raw("./download_list_0.txt");
     if(!download_list_file_raw.is_open())
@@ -107,6 +150,10 @@ int main(int argc, char** argv)
      */
     std::map<std::string,int> download_map;
     std::string read_buffer;
+    if(arch.length())
+    {
+        arch = ":" + arch;
+    }
     while(!download_list_file_raw.eof())
     {
         std::getline(download_list_file_raw,read_buffer);
@@ -114,7 +161,6 @@ int main(int argc, char** argv)
         {
             break;
         }
-        std::string arch(":arm64");
         /* all line should end with arch */
         if(read_buffer.length() < arch.length())
         {
