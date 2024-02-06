@@ -1,0 +1,20 @@
+download deb packages and all of its dependencies.
+All debs will be saved at ./download/
+
+## Quick start:
+To download debs for vim,lrzsz and make,just run:
+
+```shell
+cd ./bin
+./apt-deb-downloader -d vim
+./apt-deb-downloader -d lrzsz
+./apt-deb-downloader -d make
+```
+
+or run
+
+```shell
+cd ./bin
+./apt-deb-downloader -i ../data/test_input_file.txt
+```
+then all debs will be saved at "./bin/download/".
