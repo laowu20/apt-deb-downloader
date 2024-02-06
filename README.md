@@ -1,4 +1,4 @@
-download deb packages and all of its dependencies.
+Use apt to download deb packages and all dependencies.
 All debs will be saved at ./download/
 
 ## Quick start:
