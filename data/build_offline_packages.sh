@@ -11,4 +11,5 @@ dpkg-scanpackages -m . /dev/null | gzip -9c > Packages.gz
 cp Packages.gz ./archives
 cd ..
 tar -zcvf offline-apt-packages.tar.gz offline-packages
+rm -rf ./offline-packages
 echo "output apt source: ./offline-apt-packages.tar.gz"

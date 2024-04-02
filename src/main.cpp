@@ -5,6 +5,8 @@
 #include<string>
 #include<fstream>
 #include<map>
+#include <cctype>
+#include <algorithm>
 #include<iostream>
 void print_help_info()
 {
@@ -47,6 +49,12 @@ std::string make_deb_name_list(std::string deb_name\
         while(!deb_file.eof())
         {
             std::getline(deb_file,read_buffer);
+            read_buffer.erase(
+                    std::remove(
+                        read_buffer.begin(), 
+                        read_buffer.end(),
+                        '\r'), 
+                    read_buffer.end());
             if(read_buffer.length() == 0)
             {
                 continue;
