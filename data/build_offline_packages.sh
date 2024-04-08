@@ -1,3 +1,8 @@
+if ! type dpkg-scanpackages >/dev/null 2>&1
+then
+    echo "dpkg-dev not installed, please run \"apt install dpkg-dev\"." 
+    exit 0
+fi
 echo "***start making offline apt source.***"
 mkdir offline-packages
 cd offline-packages
