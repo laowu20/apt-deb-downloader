@@ -140,6 +140,7 @@ int main(int argc, char** argv)
     }
     printf("download start!\n");
     /* get raw deb list */
+    /* TODO @chenwenyi delete some options to download all useful debs */
     std::string download_sh("apt depends --recurse" 
         " --no-recommends --no-suggests --no-conflicts "
         " --no-breaks --no-replaces --no-enhances ");
